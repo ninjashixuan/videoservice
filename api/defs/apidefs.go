@@ -1,6 +1,20 @@
 package defs
 
-type User 
+type UserCredential struct {
+	Username string `json:"username"`
+	Pwd string `json:"pwd"`
+}
+
+type NewComment struct {
+	AuthorId int  `json:"author_id"`
+	Context string `json:"context"`
+}
+
+type NewVideo struct {
+	AuthorId int `json:"author_id"`
+	Name string `json:"name"`
+}
+
 
 //model struct
 type  User struct {
@@ -18,14 +32,18 @@ type Video struct {
 
 type  Comment struct {
 	ID string `json:"id"`
-	Author_id string `json:"author_id"`
+	Author_name string `json:"author_name"`
 	Video_id string `json:"video_id"`
-	content string `json:"content"`
+	Content string `json:"content"`
 }
 
-type Session struct {
+type SimpleSession struct {
 	Username string  `json:"username"`
 	TTL int64 `json:"ttl"`
 }
 
+//type SimpleSession struct {
+//    Username string  `json:"username"`
+//    TTL int64 `json:"ttl"`
+//}
 

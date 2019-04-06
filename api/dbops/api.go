@@ -43,7 +43,7 @@ func GerUserCredential(username string) (string, error) {
 	return pwd, nil
 }
 
-func DeleteCredential(username, pwd string) error {
+func DeleteUser(username, pwd string) error {
 	stmt, err := connDB.Prepare("DELETE FROM users WHERE username = ? AND pwd = ?")
 	if err != nil {
 		return err
@@ -166,3 +166,57 @@ func DeleteVideo(vid string) error {
 	return nil
 }
 
+//
+//func ListVideo(uname string) ([]*defs.Video, error) {
+//	stmt, err := connDB.Prepare("")
+//}
+
+func AddComment(vid string, aid int, content string) error {
+	id := util.Newuuid()
+	stmt, err := connDB.Prepare("INSERT INTO comments (id, author_id, video_id, content) VALUE (?, ?, ?, ?)")
+	if err != nil {
+		return err
+	}
+
+	_, err = stmt.Exec(id, aid, vid, content)
+	if err != nil {
+		log.Printf("insert into fail %v", err)
+		return err
+	}
+
+	defer stmt.Close()
+
+	return nil
+}
+
+func ListComments(vid string, from, to int) ([]*defs.Comment, error) {
+	stmt, err := connDB.Prepare(`SELECT comments.id, users.username, comments.content FROM
+        comments INNER JOIN users ON users.id = comments.author_id WHERE comments.video_id = ? AND
+        comments.create_time > FROM_UNIXTIME(?) AND comments.create_time <= FROM_UNIXTIME(?)
+        ORDER BY comments.create_time DESC
+    `)
+
+	defer stmt.Close()
+
+	var res []*defs.Comment
+
+	if err != nil {
+		return res, err
+	}
+
+	rows, err := stmt.Query(vid, from, to)
+	if err != nil {
+		log.Printf("select fail %v", err)
+		return res, err
+	}
+
+	for rows.Next() {
+		var comment_id, username, context string
+		if err := rows.Scan(&comment_id, &username, &context); err != nil {
+			return res, err
+		}
+		cmt := &defs.Comment{ID:comment_id, Author_name:username, Video_id:vid, Content:context}
+		res = append(res, cmt)
+	}
+	return  res, nil
+}

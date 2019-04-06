@@ -1,8 +1,10 @@
 package dbops
 
 import (
+	"fmt"
 	"log"
 	"testing"
+	"time"
 )
 
 var tempvid string
@@ -14,11 +16,11 @@ func clearTables() {
 	connDB.Exec("truncate video")
 }
 
-func MainTest(m *testing.M){
-	clearTables()
-	m.Run()
-	//clearTables()
-}
+//func MainTest(m *testing.M){
+//	clearTables()
+//	m.Run()
+//	//clearTables()
+//}
 
 func ATestUserWorkFlow(t *testing.T)  {
 	t.Run("add",testAddUserCredential)
@@ -41,13 +43,13 @@ func testGerUserCredential(t *testing.T) {
 }
 
 func testDeleteCredential(t *testing.T) {
-	err := DeleteCredential("username", "pwd")
+	err := DeleteUser("username", "pwd")
 	if err != nil {
 		t.Errorf("delete user %v", err)
 	}
 }
 
-func TestVideoWorkFlow(t *testing.T)  {
+func testVideoWorkFlow(t *testing.T)  {
 	//t.Run("addvideo", testAddNewVideo)
 	t.Run("delete", testDeleteVideo)
 }
@@ -65,4 +67,27 @@ func testDeleteVideo(t *testing.T) {
 	if err != nil {
 		log.Printf("delele fail %v", err)
 	}
+}
+
+func ATestAddComment(t *testing.T) {
+	vid := "12345678"
+	err := AddComment(vid, 7, "this is new comment")
+	if err != nil {
+		log.Printf("newed comment fail %v", err)
+	}
+}
+
+func TestListComments(t *testing.T) {
+	vid := "12345678"
+	from := int(time.Now().Unix() - 3600)
+	to := int(time.Now().Unix())
+	res, err := ListComments(vid, from, to)
+	if err != nil {
+		t.Errorf("get commentlist fail %v", err)
+	}
+
+	for i, comment := range res {
+		fmt.Printf("commet: %d %v \n", i, comment)
+	}
+
 }
