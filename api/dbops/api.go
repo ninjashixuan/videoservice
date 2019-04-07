@@ -2,6 +2,7 @@ package dbops
 
 import (
 	"database/sql"
+	"fmt"
 	_ "github.com/go-sql-driver/mysql"
 	"log"
 	"time"
@@ -175,12 +176,13 @@ func AddComment(vid string, aid int, content string) error {
 	id := util.Newuuid()
 	stmt, err := connDB.Prepare("INSERT INTO comments (id, author_id, video_id, content) VALUE (?, ?, ?, ?)")
 	if err != nil {
+		fmt.Printf(err.Error())
 		return err
 	}
 
 	_, err = stmt.Exec(id, aid, vid, content)
 	if err != nil {
-		log.Printf("insert into fail %v", err)
+		fmt.Printf(err.Error())
 		return err
 	}
 

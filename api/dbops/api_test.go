@@ -22,21 +22,21 @@ func clearTables() {
 //	//clearTables()
 //}
 
-func ATestUserWorkFlow(t *testing.T)  {
+func aTestUserWorkFlow(t *testing.T)  {
 	t.Run("add",testAddUserCredential)
 	t.Run("get",testGerUserCredential)
 	//t.Run("del", testDeleteCredential)
 }
 
 func testAddUserCredential(t *testing.T) {
-	err := AddUserCredential("username", "pwd")
+	err := AddUserCredential("username4", "pwd")
 	if err != nil {
 		t.Errorf("adduser fail %v", err)
 	}
 }
 
 func testGerUserCredential(t *testing.T) {
-	pwd, err := GerUserCredential("username")
+	pwd, err := GerUserCredential("username1")
 	if pwd != "pwd" || err != nil {
 		t.Errorf("getuser fail %v", err)
 	}
@@ -69,9 +69,9 @@ func testDeleteVideo(t *testing.T) {
 	}
 }
 
-func ATestAddComment(t *testing.T) {
-	vid := "12345678"
-	err := AddComment(vid, 7, "this is new comment")
+func aTestAddComment(t *testing.T) {
+	vid := "123456789"
+	err := AddComment(vid, 7, "this is new comment tt")
 	if err != nil {
 		log.Printf("newed comment fail %v", err)
 	}
@@ -79,7 +79,7 @@ func ATestAddComment(t *testing.T) {
 
 func TestListComments(t *testing.T) {
 	vid := "12345678"
-	from := int(time.Now().Unix() - 3600)
+	from := int(time.Now().Unix() - 360000)
 	to := int(time.Now().Unix())
 	res, err := ListComments(vid, from, to)
 	if err != nil {
