@@ -69,7 +69,7 @@ func testDeleteVideo(t *testing.T) {
 	}
 }
 
-func ATestAddComment(t *testing.T) {
+func TestAddComment(t *testing.T) {
 	vid := "12345678"
 	err := AddComment(vid, 7, "this is new comment")
 	if err != nil {
@@ -77,7 +77,7 @@ func ATestAddComment(t *testing.T) {
 	}
 }
 
-func TestListComments(t *testing.T) {
+func aTestListComments(t *testing.T) {
 	vid := "12345678"
 	from := int(time.Now().Unix() - 3600)
 	to := int(time.Now().Unix())
