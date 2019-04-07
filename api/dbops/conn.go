@@ -2,7 +2,6 @@ package dbops
 
 import (
 	"database/sql"
-	"encoding/json"
 	"fmt"
 	_ "github.com/go-sql-driver/mysql"
 	"gopkg.in/yaml.v2"
@@ -27,57 +26,46 @@ type Conf struct {
 
 
 func init() {
-    mysql := conf.getConf()
-	data, err := json.Marshal(conf)
+	yamlfile, err := ioutil.ReadFile("E:/goweb/src/videoservice/api/conf/conf.yaml")
 	if err != nil {
 		fmt.Printf(err.Error())
 	}
-	user := mysql.User
-	pwd := mysql.Pwd
-	host := mysql.Host
-	port := mysql.Port
-	dbname := mysql.Ddname
 
-	connDB, err = openMysql(port, user, pwd, host, dbname)
+	err = yaml.Unmarshal(yamlfile, &conf)
+	if err != nil {
+		fmt.Printf(err.Error())
+	}
+	user := conf.User
+	pwd := conf.Pwd
+	host := conf.Host
+	port := conf.Port
+	dbname := conf.Ddname
+
+	connDB, err = openMysql(host, port, user, pwd,  dbname)
 	if err != nil {
 		fmt.Printf("open fail %v", err)
 		panic(err.Error())
 	}
 }
 
-func openMysql(port int, host, user, pwd, dbname string) (db *sql.DB, err error) {
+func openMysql(host string, port int, user, pwd, dbname string) (*sql.DB, error) {
 	dsn := fmt.Sprintf(
-		"%s:%s@tcp(%s:%d)/%s?charset=utf8&parseTime=True&loc=Local",
+		"%s:%s@tcp(%s:%d)/%s?charset=utf8mb4&parseTime=True&loc=Local",
 		user,
 		pwd,
 		host,
 		port,
 		dbname)
 
-	db, err = sql.Open("mysql", dsn)
+	db, err := sql.Open("mysql", dsn)
 
 	if err != nil {
-		fmt.Printf("open mysql fail %v", err)
-		return
+		log.Printf("open mysql fail %v", err)
 	}
 
 	db.SetMaxIdleConns(50)
 	db.SetMaxOpenConns(100)
 
-	return
+	return db, err
 }
 
-func (c *Conf) getConf() *Conf {
-	yamlfile, err := ioutil.ReadFile("E:/goweb/src/videoservice/api/conf/conf.yaml")
-	if err != nil {
-		log.Printf("yaml get err: %v", err)
-	}
-
-	err = yaml.Unmarshal(yamlfile, c)
-	if err != nil {
-		fmt.Printf(err.Error())
-	}
-
-	return c
-}
-	
