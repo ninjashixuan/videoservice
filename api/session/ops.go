@@ -49,7 +49,29 @@ func GenerateNewSessionId(username string) string {
 
 func IsSessionExpired(sid string) (string, bool) {
 	ss, ok := sessionMap.Load(sid)
+	ct := nowInMilli()
 	if ok {
+		if ss.(*defs.SimpleSession).TTL < ct {
+			DelExpiredSession(sid)
+			return "", true
+		}
 
+		return ss.(*defs.SimpleSession).Username, false
+	} else {
+		ss, err := dbops.RetrieveSession(sid)
+		if err != nil || ss == nil {
+			return "", true
+		}
+
+		if ss.TTL < ct {
+			return "", true
+		}
+
+		sessionMap.Store(sid, ss)
+		return  ss.Username, false
 	}
+
+	return "", true
 }
+
+

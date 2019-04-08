@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	_ "github.com/go-sql-driver/mysql"
+	"golang.org/x/crypto/bcrypt"
 	"log"
 	"time"
 	"videoservice/api/defs"
@@ -16,7 +17,9 @@ func AddUserCredential(username, pwd string) error {
 		return err
 	}
 
-	_, err = stmt.Exec(username, pwd)
+	hashpwd, err := bcrypt.GenerateFromPassword([]byte(pwd), bcrypt.DefaultCost)
+
+	_, err = stmt.Exec(username, string(hashpwd))
 	if err != nil {
 		return err
 	}
@@ -26,7 +29,7 @@ func AddUserCredential(username, pwd string) error {
 	return nil
 }
 
-func GerUserCredential(username string) (string, error) {
+func GetUserCredential(username string) (string, error) {
 	stmt, err := connDB.Prepare("SELECT pwd FROM users WHERE username = ?")
 	if err != nil {
 		log.Printf("%s", err)
@@ -217,8 +220,8 @@ func ListComments(vid string, from, to int) ([]*defs.Comment, error) {
 		if err := rows.Scan(&comment_id, &username, &context); err != nil {
 			return res, err
 		}
-		cmt := &defs.Comment{ID:comment_id, Author_name:username, Video_id:vid, Content:context}
+		cmt := &defs.Comment{ID: comment_id, Author_name: username, Video_id: vid, Content: context}
 		res = append(res, cmt)
 	}
-	return  res, nil
+	return res, nil
 }
