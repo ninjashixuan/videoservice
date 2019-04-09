@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
 	"videoservice/api/defs"
 	"videoservice/api/session"
@@ -24,6 +25,7 @@ func validateUserSession(r *http.Request) bool {
 
 func validateUser(w http.ResponseWriter, r *http.Request) bool {
 	username := r.Header.Get(HEAD_FILED_USERNAME)
+	fmt.Println(username)
 	if len(username) == 0 {
 		sendErrorResponse(w, defs.ErrorNotAuthUser)
 		return false

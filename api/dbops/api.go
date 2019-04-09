@@ -62,8 +62,9 @@ func DeleteUser(username, pwd string) error {
 }
 
 func GetUser(username string) (*defs.User, error) {
-	stmt, err := connDB.Prepare("SELECT id, pwd FROM user WHERE username = ?")
+	stmt, err := connDB.Prepare("SELECT id, pwd FROM users WHERE username = ?")
 	if err != nil {
+		log.Printf("%v", err)
 		return nil, err
 	}
 

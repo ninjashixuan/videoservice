@@ -51,6 +51,10 @@ type SignedIn struct {
 	Success bool `json:"success"`
 	SessionId  string `json:"session_id"`
 }
+
+type  UserInfo struct {
+	Id int `json:"id"`
+}
 //type SimpleSession struct {
 //    Username string  `json:"username"`
 //    TTL int64 `json:"ttl"`

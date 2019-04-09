@@ -71,3 +71,29 @@ func Login(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		sendNormalResponse(w, string(rsp), 200)
 	}
 }
+
+func UserInfo(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+	if !validateUser(w, r) {
+		log.Printf("not auth user")
+		return
+	}
+
+	uname := p.ByName("username")
+	uid, err := dbops.GetUser(uname)
+	if err != nil {
+		log.Printf("get user fail")
+		sendErrorResponse(w, defs.ErrorDBError)
+		return
+	}
+
+	user := &defs.UserInfo{Id: uid.ID}
+	if rsp, err := json.Marshal(user); err != nil {
+		sendErrorResponse(w, defs.ErrorInternalFaults)
+	} else {
+		sendNormalResponse(w, string(rsp), 200)
+	}
+}
+
+func AddVideo(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+
+}
